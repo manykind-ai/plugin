@@ -1,0 +1,48 @@
+name: validate
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JSON manifests parse
+        run: |
+          set -euo pipefail
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .codex-plugin/plugin.json hooks/hooks.json; do
+            python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$f"
+          done
+
+      - name: Plugin, Codex and marketplace versions agree
+        run: |
+          set -euo pipefail
+          a=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          b=$(python3 -c "import json; print(json.load(open('.codex-plugin/plugin.json'))['version'])")
+          c=$(python3 -c "import json; print(next(p['version'] for p in json.load(open('.claude-plugin/marketplace.json'))['plugins'] if p['name']=='manykind'))")
+          [ "$a" = "$b" ] && [ "$a" = "$c" ] || { echo "::error::version mismatch: plugin $a, codex $b, marketplace $c"; exit 1; }
+
+      - name: CHANGELOG has an entry for the version
+        run: |
+          set -euo pipefail
+          v=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          grep -q "^## $v\$" CHANGELOG.md || { echo "::error::CHANGELOG.md has no '## $v' entry"; exit 1; }
+
+      - name: SKILL.md frontmatter
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for f in skills/*/SKILL.md; do
+            head -1 "$f" | grep -q '^---$' || { echo "::error file=$f::missing frontmatter"; exit 1; }
+            grep -q '^name:' "$f" || { echo "::error file=$f::missing name"; exit 1; }
+            grep -q '^description:' "$f" || { echo "::error file=$f::missing description"; exit 1; }
+          done
+
+      - name: Hook script parses
+        run: node --check hooks/check-updates.mjs

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "manykind-ai",
+  "description": "The Manykind plugin for Claude Code.",
+  "owner": {
+    "name": "Manykind",
+    "url": "https://manykind.ai"
+  },
+  "plugins": [
+    {
+      "name": "manykind",
+      "source": "./",
+      "description": "Define, design, build, evaluate and ship Manykind workflows.",
+      "category": "development",
+      "version": "0.1.0",
+      "homepage": "https://developers.manykind.ai",
+      "repository": "https://github.com/manykind-ai/plugin"
+    }
+  ]
+}

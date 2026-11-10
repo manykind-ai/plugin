@@ -1,0 +1,17 @@
+{
+  "description": "Once a day, say when the manykind plugin or the Manykind CLI has a newer version.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/check-updates.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
