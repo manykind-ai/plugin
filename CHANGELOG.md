@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.2.0
+
+- `deploy`: confirm by target, not by command. Every target counts as shared
+  unless the user names a vault and scope as their test vault in the session.
+  On a test vault, one go-ahead covers the push → run → fix loop. On a shared
+  target, every action gets a dry run and its own yes, and a change is tried
+  with `mk release` plus `mk run --version`, not `mk push`.
+- `deploy`, `workflows`: the confirmation error is described as the CLI
+  returns it: `status: "action_required"`, `reason: "confirmation_required"`,
+  with the `--yes` command in `next[]`.
+- `develop` and `evaluate` descriptions split "test": unit tests and one run
+  against a test vault load `develop`; testing against a dataset or
+  intent.md's examples loads `evaluate`.
+- `define`: no made-up rows in Examples. The table stays empty, and the
+  reply suggests one or two candidates for the user to confirm.
+- `workflows`: also loads when a step's prompt or model is tuned, and after
+  such a tweak suggests checking it on the dataset or with one `mk run`.
+- A cubby belongs to the Agent Service, so every workflow in it reads the
+  same cubby (`workflows` data table, `develop/references/cubbies.md`, which
+  said "per agent instance").
+- Evals: `deploy-shared-vault-asks`, `test-vault-loop`, `unit-test-near-miss`,
+  `examples-near-miss`. Scenarios that need a project or a shell now say it
+  isn't there, and `prompt-tweak-no-file-change` says the workflow is a
+  Manykind one.
+
 ## 0.1.0
 
 First release of the `manykind` plugin for Claude Code and Codex. Install

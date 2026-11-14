@@ -1,9 +1,10 @@
 # State: cubbies & migrations
 
-A **cubby** is a per-agent, per-alias SQLite store. You declare it in
+A **cubby** is a SQLite store that belongs to the Agent Service. You declare it in
 `manykind.config.ts`, define its schema with SQL migrations, and read/write it from
-handlers via `ctx.cubby(alias)`. Each declared alias is an isolated database
-scoped to the agent instance.
+handlers via `ctx.cubby(alias)`. Every agent and workflow the service publishes
+reads and writes the same cubby by alias; an agent of another service can't
+reach it. There is one database per vault, service and alias.
 
 ## 1. Declare the cubby in `manykind.config.ts`
 

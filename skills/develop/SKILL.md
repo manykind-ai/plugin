@@ -1,6 +1,6 @@
 ---
 name: develop
-description: Write, extend and debug Manykind workflow and agent code. Covers defineWorkflow graphs (steps, edges, gates, Result), agent engagements and event handlers, cubbies and SQL migrations, the memory bank, widgets and tests, then validating, building and running a workflow once against a vault. Use when writing or changing code in a Manykind project (manykind.config.ts, src/, migrations, widgets, tests) or debugging a build, a lint error or a run.
+description: Write, extend and debug Manykind workflow and agent code. Covers defineWorkflow graphs (steps, edges, gates, Result), agent engagements and event handlers, cubbies and SQL migrations, the memory bank, widgets and unit tests, then validating, building and running a workflow once against a vault. Use when writing or changing code in a Manykind project (manykind.config.ts, src/, migrations, widgets, unit tests), trying a workflow once against a test vault, or debugging a build, a lint error or a run.
 ---
 
 # Develop a Manykind workflow or agent
@@ -69,8 +69,10 @@ npx mk runs logs <runId> --follow      # events and task logs as NDJSON
 ```
 
 - **`mk run` is a real run.** Its steps can post to Slack, send email or call
-  other real connectors. Confirm with the user before you pass `--yes`, and
-  name the vault and the connectors it will touch.
+  other real connectors. Name the vault and the connectors it will touch.
+  On a vault the user named as a test vault, one go-ahead covers the
+  run → fix → run loop; anywhere else, ask before each `--yes` (skill
+  `deploy`, "Ask by target").
 - A fixture has the same shape as an evaluation case `input`. `--case
   <dataset>:<caseId>` reuses a dataset case.
 - `--version <v>` runs a pushed version that isn't live yet.
