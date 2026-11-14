@@ -1,6 +1,6 @@
 ---
 name: workflows
-description: Background knowledge for building on Manykind. Covers what a workflow is (triggers, steps, gates, runs, Result), where its data lives (cubbies, migrations, shared workspaces, the memory bank), how workflows build on each other's data through shared keys and events, the two files a new workflow or set keeps (intent.md and design.md), and the platform checks for designing and reviewing. It decides the output's shape: a review, "is it production-ready", a bug hunt or a small fix gets a ranked findings list, not new files. Use whenever you work on a Manykind workflow, in code (a manykind.config.ts with defineWorkflow, the manykind or mk CLI) or in the console (ROC): creating one, changing what it does or when it runs, reviewing it, debugging a run, or deciding how it should store or share data, even when the request doesn't say "Manykind".
+description: Background knowledge for building on Manykind. Covers what a workflow is (triggers, steps, gates, runs, Result), where its data lives (cubbies, migrations, shared workspaces, the memory bank), how workflows build on each other's data through shared keys and events, the two files a new workflow or set keeps (intent.md and design.md), and the platform checks for designing and reviewing. It decides the output's shape: a review, "is it production-ready", a bug hunt or a small fix gets a ranked findings list, not new files. Use whenever you work on a Manykind workflow, in code (a manykind.config.ts with defineWorkflow, the manykind or mk CLI) or in the console (ROC): creating one, changing what it does or when it runs, tuning a step's prompt or model, reviewing it, debugging a run, or deciding how it should store or share data, even when the request doesn't say "Manykind".
 ---
 
 # Manykind workflows
@@ -34,7 +34,7 @@ When this skill and the CLI or the schemas disagree, **trust the CLI**.
 | A new workflow, or a new set of workflows | `define` (problem first: `intent.md`), then `design` (how it works on the platform: `design.md`), then build | Created |
 | A change to the goal, the outcome or the trigger | `intent.md` updated (`define`); `design.md` too if steps or data move | Updated |
 | A change to steps or data (a table, a key, a connector) | `design.md` updated (`design`) | Updated |
-| A prompt tweak, a parameter value, a copy change | The edit itself | Unchanged |
+| A prompt tweak, a parameter value, a copy change | The edit itself, then suggest checking it on the workflow's dataset (`mk eval run`) or with one `mk run` before it ships | Unchanged |
 
 For a review, work through [references/checks.md](./references/checks.md)
 and execute what is cheap to execute (`mk validate`, tests, SQL replayed in
@@ -104,7 +104,7 @@ into the other.
 
 | Store | Belongs to | Use for |
 |---|---|---|
-| **Cubby** (SQLite, per agent service) | This workflow's agent service | The rows the workflow produces and reads back: decisions, outcomes, state between runs |
+| **Cubby** (SQLite, per agent service) | The agent service, so every workflow in it can read and write it | The rows the workflow produces and reads back: decisions, outcomes, state between runs. Another workflow in the same agent service reads them directly |
 | **Workspace** (`ctx.workspace`, per vault scope) | Everyone authorised in the scope | Rows another agent service must read, for example a curator in another service |
 | **Memory bank** (per vault) | The organisation | *Accepted* knowledge (principles, findings, metrics), typed and linked, with privacy on every record |
 | **Connector** (Slack, email, CRM…) | The external system | Where people see the outcome. Not a database to query later |
@@ -205,7 +205,7 @@ or a bug fix skips steps 1 and 2 (see the table at the top).
 2. **Design**: `design.md` (skill `design`).
 3. **Build**: code with `defineWorkflow` (skill `develop`), or in the console.
    Check with `mk validate`.
-4. **Try it**: `mk run <workflow> --input <fixture>` against a vault, then read
+4. **Try it**: `mk run <workflow> --input <fixture>` against a test vault, then read
    the trace with `mk runs get` / `mk runs logs`, or use the console's Run
    button.
 5. **Evaluate**: datasets and experiments (skill `evaluate`).
@@ -231,9 +231,11 @@ or a bug fix skips steps 1 and 2 (see the table at the top).
   | 4 | auth |
 
 - **Nothing prompts when the CLI runs non-interactively.**
-  - A command that needs confirmation returns `action_required` (exit 2) and
-    suggests `--yes`. Pass `--yes` only after the user has agreed to that
-    specific action.
+  - A command that needs confirmation exits 2 with `status:
+    "action_required"`, `reason: "confirmation_required"`, and the same
+    command with `--yes` in `next[]`. When `--yes` is allowed depends on the
+    target: per action on a shared vault, once per loop on a vault the user
+    named as a test vault (skill `deploy`, "Ask by target").
   - Use `--dry-run` on mutations to show the plan first.
 - **Secrets:**
   - Never ask for a secret, accept one or echo one.

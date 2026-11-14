@@ -1,6 +1,6 @@
 ---
 name: evaluate
-description: Evaluate a Manykind workflow with `mk eval`. Keep a dataset of cases in the repo (seeded from intent.md's Examples), sync it with the agent service, run it as an experiment against a workflow version, and compare experiments. Use when the user asks to test, score, benchmark, regression-check or compare workflow versions, wants to turn examples into a dataset, or mentions datasets, cases, experiments, baselines or `mk eval`.
+description: Evaluate a Manykind workflow with `mk eval`. Keep a dataset of cases in the repo (seeded from intent.md's Examples), sync it with the agent service, run it as an experiment against a workflow version, and compare experiments. Use when the user wants to test a workflow against a dataset or its examples, score, benchmark, regression-check or compare workflow versions, turn examples into a dataset, or mentions datasets, cases, experiments, baselines or `mk eval`. Not for unit tests or a single run against a vault (skill `develop`).
 ---
 
 # Evaluate a Manykind workflow
@@ -57,8 +57,8 @@ Every command takes `--json`. `mk eval run --json` prints
 - **`push`, `create`, `import`, `capture`, `baseline`, `archive`, `cancel` and
   `run` are outward-facing.** Most write the vault; `run` also starts real
   workflow runs (model calls cost money, and steps can reach real connectors)
-  and, for a non-live version, adds a temporary deployment row. Confirm with
-  the user before each. `datasets`, `pull`, `experiments`, `compare`, `show`,
+  and, for a non-live version, adds a temporary deployment row. Confirm by
+  target, as skill `deploy` says under "Ask by target". `datasets`, `pull`, `experiments`, `compare`, `show`,
   `cases`, `versions` and `check` only read (`pull` writes the local repo
   dir).
 - **Never pass `--force`, `--prune --force`, or `--restore` on your own.** Each

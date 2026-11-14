@@ -1,6 +1,6 @@
 {
   "name": "manykind",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Define, design, build, evaluate and ship Manykind workflows: intent.md and design.md for each workflow or set, ranked findings for reviews, plus the Manykind CLI loop.",
   "author": {
     "name": "Manykind",

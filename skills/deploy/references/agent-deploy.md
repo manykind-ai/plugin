@@ -27,9 +27,9 @@ push → deploy. See [workflow-releases.md](./workflow-releases.md).
 
 ## Non-negotiable rules
 
-- **`push`, `release`, `deploy`, and `publish` are outward-facing.** Never run any of them
-  without confirming with the user first (see checklist below). `build` and
-  `init` are local and safe — run them freely.
+- **`push`, `release`, `deploy`, and `publish` are outward-facing.** Confirm
+  by target, as the skill's "Ask by target" section says, using the checklist
+  below. `build` and `init` are local and safe, so run them freely.
 - **Two setup steps remain human-only, done in the ROC console:** creating the
   Agent Service (which yields the AS pubkey) and minting a storage registry access
   token. Hand those back as steps; never fake them. The ROC **Deploy** button

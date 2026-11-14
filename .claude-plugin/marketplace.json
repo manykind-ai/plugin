@@ -12,7 +12,7 @@
       "source": "./",
       "description": "Define, design, build, evaluate and ship Manykind workflows.",
       "category": "development",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "homepage": "https://developers.manykind.ai",
       "repository": "https://github.com/manykind-ai/plugin"
     }

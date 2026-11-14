@@ -79,8 +79,11 @@ exactly. Users may add more sections, and you never remove them.
      its fixtures and tests;
    - examples people gave in the thread or the transcript.
 
-   If there are none, leave the table empty. Tell the user that release needs
-   them, and that the `evaluate` skill turns them into a dataset.
+   If there are none, leave the table empty. Don't write made-up rows into
+   the file: an invented example becomes a test case nobody agreed to. In
+   your reply, suggest one or two candidate examples for the change and ask
+   the user to confirm them or give real ones. Tell the user that release
+   needs them, and that the `evaluate` skill turns them into a dataset.
 4. Write the file and summarise in two or three lines what you filled in, what
    you inferred, and what is still open.
 5. Go on to `design` (how it works on the platform and stores data), or

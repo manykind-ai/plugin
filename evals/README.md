@@ -24,6 +24,10 @@ needs is pasted into the request.
 | `ship-it-without-cli` | deploy |
 | `evaluate-it` | evaluate |
 | `review-production-ready` | workflows; not define or design (ranked findings, no intent.md or design.md) |
+| `deploy-shared-vault-asks` | deploy (names the target, dry run, a yes for this one deploy) |
+| `test-vault-loop` | develop or deploy (one go-ahead covers the loop on a named test vault) |
+| `unit-test-near-miss` | develop; not evaluate |
+| `examples-near-miss` | evaluate |
 
 ## By hand
 

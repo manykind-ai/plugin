@@ -55,24 +55,44 @@ Details: [references/agent-deploy.md](./references/agent-deploy.md). The
 `deployments/` record format is in
 [references/roc-deploy.md](./references/roc-deploy.md).
 
+## Ask by target, not by command
+
+`push`, `run`, `release`, `deploy`, `publish` and `eval run` change something
+outside the project. How you confirm depends on where the change lands. The
+CLI can't tell a test vault from a shared one yet, and in a terminal `push`
+and `deploy` don't ask at all, so your question is the only check.
+
+- **Name the target before each one:** the environment (`--env` or
+  endpoint), the vault and scope (or bucket), the identity (AS pubkey; say so
+  if you don't have it yet) and the version.
+- **Treat every target as shared unless the user says otherwise.** A target
+  is a *test vault* only when the user has said, in this session, that this
+  vault and scope is for testing. Anything else is shared: an organization
+  vault, a vault that real users or other workflows run on, any deploy that
+  moves `latest`. When in doubt, it is shared.
+- **Test vault:** one go-ahead covers the loop (push → `mk run` → fix →
+  push) with `--yes`, until the target changes. Before the first run, say
+  which connectors the workflow calls: a test vault can still message real
+  people.
+- **Shared target:** run `--dry-run`, show the plan, and wait for a yes for
+  that one action. A yes doesn't carry over to another version or another
+  target. To try a change without making it live, use `mk release` and then
+  `mk run <workflow> --version <v>`, not `mk push`, which moves `latest`
+  unchecked.
+- `build`, `validate`, `typegen`, `check`, `release list/show/diff` and any
+  `--dry-run` are local or read-only, so run them freely.
+
 ## Non-negotiable rules
 
-- **`push`, `release`, `deploy`, `publish` and `eval run` are outward-facing.**
-  Before each one, show the user:
-  - the target (environment or endpoint, vault and scope, or bucket);
-  - the identity (AS pubkey);
-  - the version.
-
-  Then wait for an explicit go-ahead. `build`, `validate`, `typegen` and
-  `--dry-run` are local or read-only, so run them freely.
 - **Dry run first** whenever the command has one (`--dry-run` is on every
   mutation, with a JSON plan). Show the plan, then apply it.
 - **Without a terminal, nothing prompts.** A command that needs
-  confirmation exits 2 with `reason: "action_required"` or
-  `"confirmation_required"` and suggests `--yes`.
-  - Add `--yes` only after the user has approved that specific action.
-  - `--accept-warnings` overrides review warnings. It also needs the user's
-    approval.
+  confirmation exits 2 with `status: "action_required"` and
+  `reason: "confirmation_required"`, and its `next[]` holds the same command
+  with `--yes`.
+  - Add `--yes` only as the rules above allow.
+  - `--accept-warnings` overrides review warnings. It always needs the
+    user's yes for that release.
 - **Never treat a failed read as empty.** If the current deployments or
   releases can't be read (`registry_read_failed`), stop and report it. Don't
   deploy over state you couldn't read.
